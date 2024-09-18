@@ -17,7 +17,7 @@ export default function StayConnected() {
     setMessage('');
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('newsletter_subscribers')
         .insert([{ email }])
         .select();

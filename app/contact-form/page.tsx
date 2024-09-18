@@ -28,7 +28,7 @@ export default function ContactFormPage() {
     setSubmitMessage('');
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('contacts')
         .insert([
           {

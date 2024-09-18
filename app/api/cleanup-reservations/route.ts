@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('reservations')
       .delete()
       .lt('expires_at', new Date().toISOString());

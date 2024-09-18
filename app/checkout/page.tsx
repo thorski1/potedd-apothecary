@@ -45,7 +45,7 @@ export default function CheckoutPage() {
 
 			return () => clearInterval(timerId);
 		}
-	}, []);
+	}, [clearCart, router]);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;

@@ -9,6 +9,15 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image_url: string;
+  stock_quantity: number;
+}
+
 export default function CartPage() {
 	const router = useRouter();
 	const { cart, addToCart, removeFromCart, clearCart } = useCart();
@@ -16,8 +25,8 @@ export default function CartPage() {
 
 	const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-	const handleQuantityChange = (item: any, change: number) => {
-		if (item.quantity + change > 0) {
+	const handleQuantityChange = (item: CartItem, change: number) => {
+		if (item.quantity + change > 0 && item.quantity + change <= item.stock_quantity) {
 			addToCart({ ...item, quantity: change });
 		}
 	};
@@ -38,7 +47,7 @@ export default function CartPage() {
 				expires_at: expiresAt.toISOString()
 			}));
 
-			const { data, error } = await supabase
+			const { error } = await supabase
 				.from('reservations')
 				.insert(reservations);
 
@@ -60,7 +69,7 @@ export default function CartPage() {
 		return (
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
 				<h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
-				<p className="mb-8">Looks like you haven't added any items to your cart yet.</p>
+				<p className="mb-8">Looks like you haven&apos;t added any items to your cart yet.</p>
 				<Button asChild>
 					<Link href="/shop">Continue Shopping</Link>
 				</Button>
