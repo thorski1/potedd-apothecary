@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import AddToCartButton from '@/components/AddToCartButton';
 
