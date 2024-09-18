@@ -2,26 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@layer base {
+	:root {
+		/* Primary color: Natural greens */
+		--primary: 120 40% 50%; /* Adjusted hue for a natural green */
+		--primary-50: 120 40% 90%; /* Adjusted hue for a natural green */
+		--primary-100: 120 40% 80%; /* Adjusted hue for a natural green */
+		--primary-200: 120 40% 70%; /* Adjusted hue for a natural green */
+		--primary-300: 120 40% 60%; /* Adjusted hue for a natural green */
+		--primary-400: 120 40% 50%; /* Adjusted hue for a natural green */
+		--primary-500: 120 40% 40%; /* Adjusted hue for a natural green */
+		--primary-600: 120 40% 30%; /* Adjusted hue for a natural green */
+		--primary-700: 120 40% 20%; /* Adjusted hue for a natural green */
+		--primary-800: 120 40% 10%; /* Adjusted hue for a natural green */
+		--primary-900: 120 40% 0%; /* Adjusted hue for a natural green */
+		--primary-foreground: 0 0% 100%; /* White text on primary color */
+
+		/* Secondary color: Earth tones */
+		--secondary: 30 30% 60%; /* Beige/brown earth tone */
+		--secondary-foreground: 0 0% 10%; /* Dark text on secondary color */
+
+		/* Accent color: Soft yellow */
+		--accent: 60 50% 80%; /* Soft yellow */
+		--accent-foreground: 0 0% 10%; /* Dark text on accent color */
+
+		/* Background and foreground colors */
+		--background: 0 0% 100%; /* White background */
+		--foreground: 0 0% 10%; /* Dark text on white background */
+
+		/* Muted colors for subtle elements */
+		--muted: 0 0% 95%; /* Light gray */
+		--muted-foreground: 0 0% 40%; /* Darker gray for muted text */
+
+		/* Card colors */
+		--card: 0 0% 100%; /* White card background */
+		--card-foreground: 0 0% 10%; /* Dark text on card */
+
+		/* Popover colors */
+		--popover: 0 0% 100%; /* White popover background */
+		--popover-foreground: 0 0% 10%; /* Dark text on popover */
+
+		/* Border color */
+		--border: 0 0% 90%; /* Light gray border */
+
+		/* Input field color */
+		--input: 0 0% 90%; /* Light gray input background */
+
+		/* Ring color for focus states */
+		--ring: 120 40% 50%; /* Same as primary color */
+
+		/* Radius for rounded corners */
+		--radius: 0.5rem;
+	}
+
+	.dark {
+		/* Dark mode colors - adjust as needed */
+		--background: 0 0% 10%;
+		--foreground: 0 0% 90%;
+		/* ... other dark mode color adjustments ... */
+	}
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base styles */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--font-lato);
+	@apply bg-background text-foreground;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-merriweather);
 }
+
+/* Add any additional global styles here */
