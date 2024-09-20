@@ -38,28 +38,41 @@ export default function CartPage() {
 	const handleCheckout = async () => {
 		setIsCheckingOut(true);
 		try {
-			const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+			console.log('Starting checkout process');
+			console.log('Cart items:', cart);
 
-			// Create reservations for each item in the cart
-			const reservations = cart.map(item => ({
+			const items = cart.map(item => ({
 				product_id: item.id,
-				quantity: item.quantity,
-				expires_at: expiresAt.toISOString()
+				quantity: item.quantity
 			}));
+			console.log('Prepared items for reservation:', items);
 
-			const { error } = await supabase
-				.from('reservations')
-				.insert(reservations);
+			const { data, error } = await supabase.rpc('create_or_update_reservation', { items });
 
-			if (error) throw error;
+			if (error) {
+				console.error('Error creating reservation:', error);
+				console.log('Full error object:', JSON.stringify(error, null, 2));
+				throw error;
+			}
 
-			// Store reservation expiration time in localStorage
-			localStorage.setItem('reservationExpires', expiresAt.toISOString());
+			console.log('Reservation created successfully:', data);
+
+			if (!data || !data.reservation_id || !data.expires_at) {
+				console.error('Invalid response from create_or_update_reservation:', data);
+				throw new Error('Invalid response from create_or_update_reservation');
+			}
+
+			localStorage.setItem('reservationId', data.reservation_id);
+			localStorage.setItem('reservationExpires', data.expires_at);
+
+			console.log('Reservation data stored in localStorage');
+			console.log('Redirecting to checkout page');
 
 			router.push('/checkout');
 		} catch (error) {
-			console.error('Error creating reservations:', error);
-			alert('An error occurred. Please try again.');
+			console.error('Error during checkout process:', error);
+			console.log('Full error object:', JSON.stringify(error, null, 2));
+			alert('An error occurred during checkout. Please try again.');
 		} finally {
 			setIsCheckingOut(false);
 		}
