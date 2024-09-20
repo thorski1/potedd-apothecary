@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/lib/supabase';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import Image from 'next/image';
 
 interface Category {
   id: string;
@@ -31,7 +32,7 @@ export default function CategoriesTable() {
 
   async function handleCreateCategory(e: React.FormEvent) {
     e.preventDefault();
-    const { data, error } = await supabase.from('categories').insert([newCategory]);
+    const { error } = await supabase.from('categories').insert([newCategory]);
     if (error) console.error('Error creating category:', error);
     else {
       fetchCategories();
@@ -109,7 +110,7 @@ export default function CategoriesTable() {
                   <p><strong>Description:</strong> {category.description}</p>
                 </div>
                 <div>
-                  <img src={category.image_url} alt={category.name} className="w-32 h-32 object-cover mt-2" />
+                  <Image src={category.image_url} alt={category.name} width={128} height={128} className="object-cover mt-2" />
                 </div>
               </div>
               <div className="mt-4">
