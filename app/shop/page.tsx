@@ -11,7 +11,8 @@ import AddToCartButton from '@/components/AddToCartButton'
 interface Product {
   id: string
   name: string
-  description: string
+  short_description: string
+  long_description: string
   price: number
   image_url: string
   category: string
@@ -68,7 +69,7 @@ function ShopContent() {
             />
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-xl font-semibold mb-2 text-gray-900">{product.name}</h2>
-              <p className="text-gray-600 mb-4 flex-grow">{product.description}</p>
+              <p className="text-gray-600 mb-4 flex-grow">{product.short_description}</p>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-auto">
                 <span className="text-lg font-bold text-gray-900 mb-2 sm:mb-0">${product.price.toFixed(2)}</span>
                 <div className="flex gap-2 w-full sm:w-auto">

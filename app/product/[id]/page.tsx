@@ -5,7 +5,8 @@ import AddToCartButton from '@/components/AddToCartButton';
 interface Product {
   id: string;
   name: string;
-  description: string;
+  short_description: string;
+  long_description: string;
   price: number;
   image_url: string;
   category: string;
@@ -49,7 +50,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         <div>
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           <p className="text-xl mb-4">${product.price.toFixed(2)}</p>
-          <p className="mb-4">{product.description}</p>
+          <p className="mb-4">{product.long_description}</p>
           <p className="mb-4">In Stock: {product.stock_quantity}</p>
           <AddToCartButton product={product} />
         </div>
