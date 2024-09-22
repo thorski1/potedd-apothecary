@@ -18,6 +18,8 @@
     "@supabase/supabase-js": "^2.45.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "csv-parse": "^5.5.6",
+    "csv-stringify": "^6.5.1",
     "lucide-react": "^0.441.0",
     "next": "14.2.11",
     "react": "^18",
@@ -26,12 +28,14 @@
     "shadcn": "^2.0.7",
     "stripe": "^16.11.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",

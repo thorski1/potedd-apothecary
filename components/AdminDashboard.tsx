@@ -19,6 +19,7 @@ import OrdersTable from '@/components/OrdersTable';
 import ReservationsTable from '@/components/ReservationsTable';
 import { logoutAction } from '@/app/admin/actions';
 import { LogOut, LayoutDashboard, Menu } from 'lucide-react';
+import { ProductBulkActions } from '@/components/ProductBulkActions';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -101,6 +102,12 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
+
+      {/* Add the ProductBulkActions component */}
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">Product Bulk Actions</h2>
+        <ProductBulkActions />
+      </section>
     </div>
   );
 }
