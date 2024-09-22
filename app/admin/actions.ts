@@ -126,3 +126,56 @@ export async function exportProductsToCSV() {
 
   return csvContent;
 }
+
+export async function createProductVariant(productId: string, variantData: {
+  name: string;
+  price: number;
+  stock_quantity: number;
+  attributes: Record<string, string>;
+}) {
+  const { data, error } = await supabase
+    .from('product_variants')
+    .insert({
+      product_id: productId,
+      ...variantData
+    })
+    .select()
+
+  if (error) throw error
+  return data[0]
+}
+
+export async function updateProductVariant(variantId: string, variantData: {
+  name?: string;
+  price?: number;
+  stock_quantity?: number;
+  attributes?: Record<string, string>;
+}) {
+  const { data, error } = await supabase
+    .from('product_variants')
+    .update(variantData)
+    .eq('id', variantId)
+    .select()
+
+  if (error) throw error
+  return data[0]
+}
+
+export async function deleteProductVariant(variantId: string) {
+  const { error } = await supabase
+    .from('product_variants')
+    .delete()
+    .eq('id', variantId)
+
+  if (error) throw error
+}
+
+export async function getProductVariants(productId: string) {
+  const { data, error } = await supabase
+    .from('product_variants')
+    .select('*')
+    .eq('product_id', productId)
+
+  if (error) throw error
+  return data
+}
