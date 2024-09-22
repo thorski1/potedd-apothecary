@@ -3,6 +3,10 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { parse } from 'csv-parse/sync';
+import { stringify } from 'csv-stringify/sync';
+import { v4 as uuidv4 } from 'uuid';
+import { ProductCSVData } from '@/lib/types';
 
 export async function loginAction(formData: FormData) {
   const password = formData.get('password') as string;
@@ -75,3 +79,50 @@ export async function deleteProduct(id: string) {
 }
 
 // Add similar functions for categories and orders
+
+export async function importProductsFromCSV(formData: FormData) {
+  const file = formData.get('file') as File;
+  const content = await file.text();
+  
+  const records = parse(content, {
+    columns: true,
+    skip_empty_lines: true,
+  });
+
+  const now = new Date().toISOString();
+  const productsWithIds = records.map((record: ProductCSVData) => ({
+    ...record,
+    id: uuidv4(),
+    created_at: now,
+    updated_at: now,
+    price: parseFloat(record.price.toString()), // Ensure price is a number
+    stock_quantity: parseInt(record.stock_quantity.toString(), 10), // Ensure stock_quantity is an integer
+  }));
+
+  const { error } = await supabase.from('products').insert(productsWithIds);
+  if (error) throw error;
+}
+
+export async function exportProductsToCSV() {
+  const { data: products, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  const csvContent = stringify(products, {
+    header: true,
+    columns: [
+      'name',
+      'short_description',
+      'long_description',
+      'price',
+      'image_url',
+      'category',
+      'stock_quantity',
+    ],
+  });
+
+  return csvContent;
+}

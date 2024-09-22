@@ -4,6 +4,7 @@ import "./globals.css";
 import NavMenu from "@/components/nav-menu";
 import Footer from "@/components/footer";
 import { CartProvider } from '@/lib/cartContext';
+import { Toaster } from "@/components/ui/toaster";
 
 const lato = Lato({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-lato" });
 const merriweather = Merriweather({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-merriweather" });
@@ -27,6 +28,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <Toaster />
         </CartProvider>
       </body>
     </html>
