@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/lib/supabase';
 import { createProduct, updateProduct, deleteProduct } from '@/app/admin/actions';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -173,7 +174,13 @@ export default function ProductsTable() {
                   <p><strong>Stock Quantity:</strong> {product.stock_quantity}</p>
                   <p><strong>Created At:</strong> {new Date(product.created_at).toLocaleString()}</p>
                   <p><strong>Updated At:</strong> {new Date(product.updated_at).toLocaleString()}</p>
-                  <img src={product.image_url} alt={product.name} className="w-32 h-32 object-cover mt-2" />
+                  <Image
+                    src={product.image_url || '/placeholder.png'}
+                    alt={product.name}
+                    width={50}
+                    height={50}
+                    className="object-cover"
+                  />
                 </div>
               </div>
               <div className="mt-4">

@@ -67,7 +67,12 @@ export async function getTopSellingProduct() {
   return 'N/A';
 }
 
-export async function getSalesData() {
+interface SalesData {
+  date: string;
+  amount: number;
+}
+
+export async function getSalesData(): Promise<SalesData[]> {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -83,12 +88,17 @@ export async function getSalesData() {
     const date = new Date(order.created_at).toISOString().split('T')[0];
     acc[date] = (acc[date] || 0) + order.total_amount;
     return acc;
-  }, {});
-
-  return Object.entries(salesByDay).map(([date, amount]) => ({ date, amount }));
+  }, {} as Record<string, number>);
+  return Object.entries(salesByDay).map(([date, amount]) => ({ date, amount: amount as number }));
 }
 
-export async function getPopularProducts() {
+interface PopularProduct {
+  name: string;
+    sales: number;
+    product_id: string;
+}
+
+export async function getPopularProducts(): Promise<PopularProduct[]> {
   const { data, error } = await supabase
     .from('order_items')
     .select('product_id, quantity')
@@ -99,10 +109,10 @@ export async function getPopularProducts() {
   const productSales = data.reduce((acc, item) => {
     acc[item.product_id] = (acc[item.product_id] || 0) + item.quantity;
     return acc;
-  }, {});
+  }, {} as Record<string, number>);
 
   const topProducts = Object.entries(productSales)
-    .sort((a, b) => b[1] - a[1])
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
   const productDetails = await Promise.all(
@@ -115,25 +125,31 @@ export async function getPopularProducts() {
 
       if (error) throw error;
 
-      return { name: data.name, sales };
+      return { name: data.name, sales, product_id: productId };
     })
   );
 
   return productDetails;
 }
 
-export async function getOrderStatusData() {
+interface OrderStatusData {
+	name: string;
+    value: number;
+    status: string;
+}
+
+export async function getOrderStatusData(): Promise<OrderStatusData[]> {
   const { data, error } = await supabase
     .from('orders')
-    .select('status')
-    .throwOnError();
+		.select("status")
+		.throwOnError();
 
-  if (error) throw error;
+	if (error) throw error;
 
-  const statusCounts = data.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1;
-    return acc;
-  }, {});
+		const statusCounts = data.reduce((acc, order) => {
+			acc[order.status as string] = (acc[order.status as string] || 0) + 1;
+			return acc;
+		}, {} as Record<string, number>);
 
-  return Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+	return Object.entries(statusCounts).map(([name, value]) => ({ name, value: value as number, status: name as string }));
 }
