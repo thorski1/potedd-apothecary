@@ -13,10 +13,9 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  quantity: number;
   image_url: string;
+  quantity: number;
   stock_quantity: number;
-  attributes?: Record<string, string>;
 }
 
 export default function CartPage() {
