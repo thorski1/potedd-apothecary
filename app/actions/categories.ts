@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { supabase } from '@/lib/supabase'
+import { Category } from '@/lib/types'
 
 export async function createCategory(category: Partial<Category>) {
   const { error } = await supabase.from("categories").insert([category]);

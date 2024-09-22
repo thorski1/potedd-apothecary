@@ -15,3 +15,13 @@ export type ProductCSVData = Omit<Product, 'id' | 'created_at' | 'updated_at'> &
   price: number | string;
   stock_quantity: number | string;
 };
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  image_url?: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
