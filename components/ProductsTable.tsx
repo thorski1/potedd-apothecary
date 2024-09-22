@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/lib/supabase';
-import { createProduct, updateProduct, deleteProduct } from '@/app/admin/actions';
+import { createProduct, updateProduct, deleteProduct, createProductVariant, updateProductVariant, deleteProductVariant, getProductVariants } from '@/app/admin/actions';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from 'next/image';
+import { ProductVariantForm } from '@/components/ProductVariantForm';
 
 interface Product {
   id: string;
@@ -21,11 +22,24 @@ interface Product {
   updated_at: string;
 }
 
+interface ProductVariant {
+  id: string;
+  product_id: string;
+  name: string;
+  price: number;
+  stock_quantity: number;
+  attributes: Record<string, string>;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function ProductsTable() {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({});
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   useEffect(() => {
     fetchProducts();
@@ -98,6 +112,40 @@ export default function ProductsTable() {
   async function handleDeleteProduct(id: string) {
     await deleteProduct(id);
     fetchProducts();
+  }
+
+  async function handleSelectProduct(product: Product) {
+    setSelectedProduct(product);
+    const productVariants = await getProductVariants(product.id);
+    setVariants(productVariants);
+  }
+
+  async function handleAddVariant(variantData: {
+    name: string;
+    price: number;
+    stock_quantity: number;
+    attributes: Record<string, string>;
+  }) {
+    if (selectedProduct) {
+      const newVariant = await createProductVariant(selectedProduct.id, variantData);
+      setVariants([...variants, newVariant]);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function _handleUpdateVariant(variantId: string, variantData: {
+    name?: string;
+    price?: number;
+    stock_quantity?: number;
+    attributes?: Record<string, string>;
+  }) {
+    const updatedVariant = await updateProductVariant(variantId, variantData);
+    setVariants(variants.map(v => v.id === variantId ? updatedVariant : v));
+  }
+
+  async function handleDeleteVariant(variantId: string) {
+    await deleteProductVariant(variantId);
+    setVariants(variants.filter(v => v.id !== variantId));
   }
 
   return (
@@ -185,7 +233,8 @@ export default function ProductsTable() {
               </div>
               <div className="mt-4">
                 <Button onClick={() => setEditingProduct(product)} className="mr-2">Edit</Button>
-                <Button onClick={() => handleDeleteProduct(product.id)} variant="destructive">Delete</Button>
+                <Button onClick={() => handleDeleteProduct(product.id)} variant="destructive" className="mr-2">Delete</Button>
+                <Button onClick={() => handleSelectProduct(product)}>Manage Variants</Button>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -249,6 +298,26 @@ export default function ProductsTable() {
               <Button type="submit" className="mr-2">Update</Button>
               <Button onClick={() => setEditingProduct(null)} variant="outline">Cancel</Button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Product Variants Management */}
+      {selectedProduct && (
+        <div className="mt-8 p-4 border rounded">
+          <h3 className="text-xl font-bold mb-4">Variants for {selectedProduct.name}</h3>
+          <ProductVariantForm onSubmit={handleAddVariant} />
+          <div className="mt-4">
+            <h4 className="text-lg font-semibold mb-2">Existing Variants</h4>
+            {variants.map(variant => (
+              <div key={variant.id} className="border p-4 mb-4">
+                <h5 className="font-bold">{variant.name}</h5>
+                <p>Price: ${variant.price}</p>
+                <p>Stock: {variant.stock_quantity}</p>
+                <p>Attributes: {JSON.stringify(variant.attributes)}</p>
+                <Button onClick={() => handleDeleteVariant(variant.id)} variant="destructive" className="mt-2">Delete Variant</Button>
+              </div>
+            ))}
           </div>
         </div>
       )}

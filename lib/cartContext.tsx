@@ -13,7 +13,8 @@ interface CartItem {
 	price: number;
 	quantity: number;
 	image_url: string;
-	stock_quantity: number; // Added stock_quantity property
+	stock_quantity: number;
+	attributes?: Record<string, string>;
 }
 
 interface CartContextType {
@@ -21,97 +22,61 @@ interface CartContextType {
 	addToCart: (item: CartItem) => void;
 	removeFromCart: (id: string) => void;
 	clearCart: () => void;
+	updateCart: (newCart: CartItem[]) => void; // Add this line
 }
 
 const CartContext = createContext<
 	CartContextType | undefined
 >(undefined);
 
-export const CartProvider: React.FC<{
-	children: React.ReactNode;
-}> = ({ children }) => {
+export function CartProvider({ children }: { children: React.ReactNode }) {
 	const [cart, setCart] = useState<CartItem[]>([]);
-	const [isLoaded, setIsLoaded] = useState(false);
 
 	useEffect(() => {
-		const savedCart = localStorage.getItem("cart");
-		console.log("Initial load - Saved cart:", savedCart);
+		const savedCart = localStorage.getItem('cart');
 		if (savedCart) {
-			try {
-				const parsedCart = JSON.parse(savedCart);
-				console.log(
-					"Cart loaded from localStorage:",
-					parsedCart
-				);
-				setCart(parsedCart);
-			} catch (error) {
-				console.error("Error parsing saved cart:", error);
-			}
+			setCart(JSON.parse(savedCart));
 		}
-		setIsLoaded(true);
 	}, []);
 
 	useEffect(() => {
-		if (isLoaded) {
-			console.log(
-				"Cart updated, saving to localStorage:",
-				cart
-			);
-			localStorage.setItem("cart", JSON.stringify(cart));
-		}
-	}, [cart, isLoaded]);
+		localStorage.setItem('cart', JSON.stringify(cart));
+	}, [cart]);
 
 	const addToCart = (item: CartItem) => {
-		console.log("Adding to cart:", item);
-		setCart((prevCart) => {
-			const existingItem = prevCart.find(
-				(i) => i.id === item.id
-			);
+		setCart(prevCart => {
+			const existingItem = prevCart.find(i => i.id === item.id);
 			if (existingItem) {
-				if (existingItem.quantity + item.quantity <= item.stock_quantity) {
-					console.log("Updating existing item");
-					return prevCart.map((i) =>
-						i.id === item.id
-							? { ...i, quantity: i.quantity + item.quantity }
-							: i
-					);
-				} else {
-					console.log("Cannot add more items than available in stock");
-					return prevCart;
-				}
+				return prevCart.map(i =>
+					i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+				);
 			}
-			if (item.quantity <= item.stock_quantity) {
-				console.log("Adding new item");
-				return [...prevCart, item];
-			} else {
-				console.log("Cannot add more items than available in stock");
-				return prevCart;
-			}
+			return [...prevCart, item];
 		});
 	};
 
 	const removeFromCart = (id: string) => {
-		console.log("Removing from cart:", id);
-		setCart((prevCart) =>
-			prevCart.filter((item) => item.id !== id)
-		);
+		setCart(prevCart => prevCart.filter(item => item.id !== id));
 	};
 
 	const clearCart = () => {
-		console.log("Clearing cart");
 		setCart([]);
+	};
+
+	const updateCart = (newCart: CartItem[]) => {
+		setCart(newCart);
 	};
 
 	return (
 		<CartContext.Provider
-			value={{ cart, addToCart, removeFromCart, clearCart }}
+			value={{ cart, addToCart, removeFromCart, clearCart, updateCart }} // Add updateCart here
 		>
 			{children}
 		</CartContext.Provider>
 	);
-};
+}
 
-export const useCart = () => {
+export function useCart() {
 	const context = useContext(CartContext);
 	if (context === undefined) {
 		throw new Error(
@@ -119,4 +84,4 @@ export const useCart = () => {
 		);
 	}
 	return context;
-};
+}
