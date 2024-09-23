@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm run optimize-images && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "optimize-images": "node scripts/optimizeImages.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
@@ -29,10 +30,12 @@
     "react-dom": "^18",
     "recharts": "^2.12.7",
     "shadcn": "^2.0.7",
+    "sharp": "^0.33.5",
     "stripe": "^16.11.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "webp-converter": "^2.3.3"
   },
   "devDependencies": {
     "@types/node": "^20",

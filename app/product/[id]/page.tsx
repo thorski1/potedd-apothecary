@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import AddToCartButton from '@/components/AddToCartButton';
+import { Metadata } from 'next';
 
 interface Product {
   id: string;
@@ -26,6 +27,45 @@ async function getProduct(id: string): Promise<Product | null> {
   }
 
   return data;
+}
+
+function generateProductJsonLd(product: Product) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.short_description,
+    image: product.image_url,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'USD',
+      availability: product.stock_quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    },
+  };
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const product = await getProduct(params.id);
+
+  if (!product) {
+    return {
+      title: 'Product Not Found',
+    };
+  }
+
+  return {
+    title: product.name,
+    description: product.short_description,
+    openGraph: {
+      title: product.name,
+      description: product.short_description,
+      images: [product.image_url],
+    },
+    other: {
+      'application/ld+json': JSON.stringify(generateProductJsonLd(product)),
+    },
+  };
 }
 
 export default async function ProductPage({ params }: { params: { id: string } }) {

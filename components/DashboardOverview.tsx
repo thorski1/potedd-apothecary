@@ -10,7 +10,15 @@ import { SalesChart } from "@/components/SalesChart";
 import { PopularProductsChart } from "@/components/PopularProductsChart";
 import { OrderStatusChart } from "@/components/OrderStatusChart";
 
-export function DashboardOverview() {
+/**
+ * DashboardOverview component for displaying an overview of the admin dashboard.
+ * 
+ * This component includes key metrics, sales overview, popular products,
+ * order status, and recent activity.
+ *
+ * @returns {JSX.Element} The rendered DashboardOverview component.
+ */
+export function DashboardOverview(): JSX.Element {
 	return (
 		<div className="space-y-6">
 			<KeyMetrics />

@@ -56,7 +56,7 @@ export default function ProductsTable() {
     if (imageFile) {
       const { data, error } = await supabase.storage
         .from('product-images')
-        .upload(`${Date.now()}-${imageFile.name}`, imageFile);
+        .upload(`${Date.now()}-${imageFile.name.replace(/\.(jpg|jpeg|png)$/, '.webp')}`, imageFile);
 
       if (error) {
         console.error('Error uploading image:', error);
@@ -88,7 +88,7 @@ export default function ProductsTable() {
       if (imageFile) {
         const { data, error } = await supabase.storage
           .from('product-images')
-          .upload(`${Date.now()}-${imageFile.name}`, imageFile);
+          .upload(`${Date.now()}-${imageFile.name.replace(/\.(jpg|jpeg|png)$/, '.webp')}`, imageFile);
 
         if (error) {
           console.error('Error uploading image:', error);

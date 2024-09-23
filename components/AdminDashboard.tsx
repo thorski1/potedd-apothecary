@@ -21,7 +21,16 @@ import { logoutAction } from '@/app/admin/actions';
 import { LogOut, LayoutDashboard, Menu } from 'lucide-react';
 import { ProductBulkActions } from '@/components/ProductBulkActions';
 
-export default function AdminDashboard() {
+/**
+ * AdminDashboard component for managing the admin interface.
+ * 
+ * This component provides a tabbed interface for various admin functions,
+ * including product management, order tracking, and user communications.
+ * It's responsive, with a dropdown menu for mobile views.
+ *
+ * @returns {JSX.Element} The rendered AdminDashboard component.
+ */
+export default function AdminDashboard(): JSX.Element {
   const [activeTab, setActiveTab] = useState('overview');
   const [dropdownWidth, setDropdownWidth] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -45,7 +54,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
         <h1 className="text-3xl font-bold text-gray-800 flex items-center">
           <LayoutDashboard className="mr-2" />
           Admin Dashboard
@@ -93,17 +102,17 @@ export default function AdminDashboard() {
         </Tabs>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-8">
         {tabs.map((tab) => (
           <div key={tab.id} className={activeTab === tab.id ? 'block' : 'hidden'}>
-            <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
+            <div className="bg-white shadow-md rounded-lg p-6">
               {tab.component}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Add the ProductBulkActions component */}
+      {/* Product Bulk Actions */}
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Product Bulk Actions</h2>
         <ProductBulkActions />

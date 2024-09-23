@@ -10,7 +10,7 @@ export default function HeroSection({ title, subtitle, backgroundImage }: HeroSe
   return (
     <section className="relative h-[600px]">
       <Image
-        src={backgroundImage}
+        src={backgroundImage.replace(/\.(jpg|jpeg|png)$/, '.webp')}
         alt="Greenhouse background"
         fill
         className="object-cover"

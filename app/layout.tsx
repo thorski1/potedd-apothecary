@@ -1,63 +1,44 @@
-import { Metadata } from 'next'
-import { Lato, Merriweather } from "next/font/google";
-import "./globals.css";
-import NavMenu from "@/components/nav-menu";
-import Footer from "@/components/footer";
-import { CartProvider } from '@/lib/cartContext';
-import { Toaster } from "@/components/ui/toaster";
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import Footer from '@/components/footer'
+import { CartProvider } from '@/lib/cartContext'
+import NavMenu from '@/components/nav-menu'
 
-const lato = Lato({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-lato" });
-const merriweather = Merriweather({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-merriweather" });
+const inter = Inter({ subsets: ['latin'] })
 
+/**
+ * Metadata for the application.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL('https://potedd-apothecary.com'),
-  title: {
-    default: 'Potedd Apothecary',
-    template: '%s | Potedd Apothecary',
-  },
-  description: 'Discover unique potions and magical remedies at Potedd Apothecary.',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://potedd-apothecary.com',
-    siteName: 'Potedd Apothecary',
-    images: [
-      {
-        url: '/homepage-hero.png',
-        width: 1200,
-        height: 630,
-        alt: 'Potedd Apothecary - Magical Remedies and Potions',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@poteddapothecary',
-    creator: '@poteddapothecary',
-  },
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-icon.png',
-  },
+  title: 'Pot.EdD Apothecary',
+  description: 'Your source for native, perennial fruits and plants',
 }
 
+/**
+ * RootLayout component for the entire application.
+ * 
+ * This component wraps all pages and provides the basic structure,
+ * including the CartProvider for global state management.
+ *
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components to render.
+ * @returns {JSX.Element} The rendered RootLayout component.
+ */
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
+}): JSX.Element {
   return (
     <html lang="en">
-      <body className={`${lato.variable} ${merriweather.variable} font-sans flex flex-col min-h-screen`}>
+      <body className={inter.className}>
         <CartProvider>
           <NavMenu />
-          <main className="flex-grow">
-            {children}
-          </main>
+          {children}
           <Footer />
-          <Toaster />
         </CartProvider>
       </body>
     </html>
-  );
+  )
 }
