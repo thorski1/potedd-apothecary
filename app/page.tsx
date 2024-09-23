@@ -1,33 +1,65 @@
 import HeroSection from "@/components/hero-section";
 import FeaturedProducts from "@/components/featured-products";
 import CallToAction from "@/components/call-to-action";
-import Introduction from "@/components/introduction";
+import ContactOptions from "@/components/contact-options";
+import { Metadata } from 'next';
 
-export default function Home() {
+/**
+ * HomePage component for the main landing page of the website.
+ * 
+ * This page includes a hero section, featured products,
+ * a call-to-action section, and contact options.
+ *
+ * @returns {JSX.Element} The rendered HomePage component.
+ */
+export const metadata: Metadata = {
+	title: "Pot.EdD Apothecary",
+	description:
+		"Your source for native, perennial fruits and plants",
+	other: {
+		"application/ld+json": JSON.stringify([
+			{
+				"@context": "https://schema.org",
+				"@type": "WebSite",
+				name: "Pot.EdD Apothecary",
+				url: "https://potedd-apothecary.com",
+			},
+			{
+				"@context": "https://schema.org",
+				"@type": "Organization",
+				name: "Pot.EdD Apothecary",
+				url: "https://potedd-apothecary.com",
+				logo: "https://potedd-apothecary.com/logo.png",
+			},
+		]),
+	},
+};
+
+export default function HomePage(): JSX.Element {
 	return (
-		<main className="min-h-screen">
+		<main>
 			<HeroSection
-				title="Pot.EdD Apothecary"
-				subtitle="Welcome to Pot.EdD Apothecary. Our greenhouse is a haven for locally-grown, sustainable plants. 'Grow with Us' – your go-to nursery for native, perennial fruits and plants."
+				title="Welcome to Pot.EdD Apothecary"
+				subtitle="Your source for native, perennial fruits and plants"
 				backgroundImage="/homepage-hero.png"
 			/>
-			<Introduction content="At Pot.EdD Apothecary, our mission is to preserve native fruit and plant species by growing them in harmony with nature. We follow micro-local, sustainable practices to ensure that all our plants thrive in the healthiest environment." />
 			<FeaturedProducts
-				title="Featured Products"
-				description="Explore our current offerings including canna lilies, prickly pear starters, elderberry trees, hibiscus, figs, and more! These seasonal plants are all grown with love and care, right here in our greenhouse."
+				title="Our Featured Products"
+				description="Discover our selection of carefully curated plants and fruits"
 			/>
 			<CallToAction
-				header="Ready to Start Your Green Journey?"
-				subheader="Explore our collection of sustainable, locally-grown plants and learn about our eco-friendly practices."
+				header="Start Your Garden Today"
+				subheader="Join us in promoting sustainable, micro-local gardening practices"
 				primaryButton={{
-					text: "Shop Plants Now",
+					text: "Shop Now",
 					href: "/shop",
 				}}
 				secondaryButton={{
-					text: "Learn More About Our Process",
+					text: "Learn More",
 					href: "/about",
 				}}
 			/>
+			<ContactOptions />
 		</main>
 	);
 }

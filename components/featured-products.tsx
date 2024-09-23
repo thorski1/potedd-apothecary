@@ -12,11 +12,11 @@ interface FeaturedProductsProps {
 }
 
 const featuredProducts: Product[] = [
-  { id: 1, name: 'Canna Lilies', image: '/canna-lilly.png' },
-  { id: 2, name: 'Prickly Pear Starters', image: '/prickly-pear.png' },
-  { id: 3, name: 'Elderberry Trees', image: '/elderberry.png' },
-  { id: 4, name: 'Hibiscus', image: '/hibiscus.png' },
-  // { id: 5, name: 'Figs', image: '/figs.png' },
+  { id: 1, name: 'Canna Lilies', image: '/canna-lilly.webp' },
+  { id: 2, name: 'Prickly Pear Starters', image: '/prickly-pear.webp' },
+  { id: 3, name: 'Elderberry Trees', image: '/elderberry.webp' },
+  { id: 4, name: 'Hibiscus', image: '/hibiscus.webp' },
+  // { id: 5, name: 'Figs', image: '/figs.webp' },
 ]
 
 export default function FeaturedProducts({ title, description }: FeaturedProductsProps) {

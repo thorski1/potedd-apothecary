@@ -18,7 +18,16 @@ import {
 	Package,
 } from "lucide-react";
 
-const MetricCard = ({ title, value, icon: Icon }: { title: string, value: string, icon: React.ElementType }) => (
+/**
+ * MetricCard component for displaying a single metric.
+ * 
+ * @param {Object} props - The component props.
+ * @param {string} props.title - The title of the metric.
+ * @param {string} props.value - The value of the metric.
+ * @param {React.ElementType} props.icon - The icon component to display.
+ * @returns {JSX.Element} The rendered MetricCard component.
+ */
+const MetricCard = ({ title, value, icon: Icon }: { title: string, value: string, icon: React.ElementType }): JSX.Element => (
 	<Card>
 		<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 			<CardTitle className="text-sm font-medium">
@@ -32,7 +41,15 @@ const MetricCard = ({ title, value, icon: Icon }: { title: string, value: string
 	</Card>
 );
 
-export function KeyMetrics() {
+/**
+ * KeyMetrics component for displaying important business metrics.
+ * 
+ * This component fetches and displays key metrics such as total sales,
+ * total orders, average order value, and top selling product.
+ *
+ * @returns {JSX.Element} The rendered KeyMetrics component.
+ */
+export function KeyMetrics(): JSX.Element {
 	const [metrics, setMetrics] = useState([
 		{
 			title: "Total Sales",
@@ -61,10 +78,8 @@ export function KeyMetrics() {
 			try {
 				const totalSales = await getTotalSales();
 				const totalOrders = await getTotalOrders();
-				const averageOrderValue =
-					await getAverageOrderValue();
-				const topSellingProduct =
-					await getTopSellingProduct();
+				const averageOrderValue = await getAverageOrderValue();
+				const topSellingProduct = await getTopSellingProduct();
 
 				setMetrics([
 					{
@@ -100,7 +115,7 @@ export function KeyMetrics() {
 		}
 
 		fetchMetrics();
-	}, [metrics, setMetrics]); // Add metrics and setMetrics to the dependency array
+	}, []);
 
 	return (
 		<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
