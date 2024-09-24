@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-client'
 import { Category } from '@/lib/types'
 
 export async function createCategory(category: Partial<Category>) {

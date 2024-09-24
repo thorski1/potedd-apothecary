@@ -1,7 +1,8 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase-client';
 import Image from 'next/image';
 import AddToCartButton from '@/components/AddToCartButton';
 import { Metadata } from 'next';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 interface Product {
   id: string;
@@ -77,6 +78,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <Breadcrumbs productName={product.name} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <Image

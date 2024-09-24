@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-client'
 
 interface Product {
   id: string;

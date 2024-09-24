@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
-import { useCart } from '@/lib/cartContext';
+import { signOut } from '@/app/actions/auth';
+import { Menu, X } from 'lucide-react';
+import { supabase } from '@/lib/supabase-client';
+import CartIcon from './CartIcon';
 
 const navItems = [
-  { name: 'Home', href: '/' },
   { name: 'Products', href: '/products' },
   { name: 'Shop', href: '/shop' },
   { name: 'About', href: '/about' },
@@ -16,100 +17,134 @@ const navItems = [
 ];
 
 export default function NavMenu() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const pathname = usePathname();
-  const { cart } = useCart();
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
-  const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleNavigation = (href: string) => {
+    router.push(href);
+    setIsMenuOpen(false);
+  };
 
   return (
-    <nav className="bg-secondary/5">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="text-gray-900 text-xl font-bold">
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <Link href="/" className="flex-shrink-0 flex items-center" onClick={() => setIsMenuOpen(false)}>
               Pot.EdD Apothecary
             </Link>
           </div>
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    pathname === item.href
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-gray-900 hover:bg-accent/20'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              {isClient && (
-                <Link href="/cart" className="relative p-2">
-                  <ShoppingCart className="h-6 w-6 text-gray-900" />
-                  {cartItemsCount > 0 && (
-                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-accent-foreground transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </Link>
-              )}
-            </div>
-          </div>
-          <div className="md:hidden">
-            <Button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:bg-accent/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {isOpen && (
-        <div className="md:hidden container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
             {navItems.map((item) => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                className={`${
                   pathname === item.href
-                    ? 'bg-accent text-accent-foreground'
-                    : 'text-gray-900 hover:bg-accent/20'
-                }`}
-                onClick={() => setIsOpen(false)}
+                    ? "border-indigo-500 text-gray-900"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="/cart"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-accent/20"
-              onClick={() => setIsOpen(false)}
+          </div>
+          <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+            {user ? (
+              <>
+                <span className="text-sm text-gray-700 mr-4">Welcome, {user.email}</span>
+                <form action={signOut}>
+                  <Button type="submit" variant="outline">Sign Out</Button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Link href="/login" passHref>
+                  <Button variant="outline" className="mr-2">Log In</Button>
+                </Link>
+                <Link href="/signup" passHref>
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
+            <CartIcon />
+          </div>
+          <div className="sm:hidden flex items-center">
+            <CartIcon />
+            <button
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 ml-2"
             >
-              Cart ({cartItemsCount})
-            </Link>
+              <span className="sr-only">Open main menu</span>
+              {isMenuOpen ? (
+                <X className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="block h-6 w-6" aria-hidden="true" />
+              )}
+            </button>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Mobile menu */}
+      <div className={`sm:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
+        <div className="pt-2 pb-3 space-y-1">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className={`${
+                pathname === item.href
+                  ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                  : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigation(item.href);
+              }}
+            >
+              {item.name}
+            </a>
+          ))}
+        </div>
+        <div className="pt-4 pb-3 border-t border-gray-200">
+          {user ? (
+            <div className="flex items-center px-4">
+              <div className="flex-shrink-0">
+                <span className="text-sm font-medium text-gray-500">Welcome, {user.email}</span>
+              </div>
+              <div className="ml-3">
+                <form action={signOut}>
+                  <Button type="submit" variant="outline" size="sm">Sign Out</Button>
+                </form>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center px-4 space-x-3">
+              <Link href="/login" passHref>
+                <Button variant="outline" size="sm" onClick={() => setIsMenuOpen(false)}>Log In</Button>
+              </Link>
+              <Link href="/signup" passHref>
+                <Button size="sm" onClick={() => setIsMenuOpen(false)}>Sign Up</Button>
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }

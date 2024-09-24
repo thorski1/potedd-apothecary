@@ -2,11 +2,12 @@ import HeroSection from "@/components/hero-section";
 import FeaturedProducts from "@/components/featured-products";
 import CallToAction from "@/components/call-to-action";
 import ContactOptions from "@/components/contact-options";
-import { Metadata } from 'next';
+import { Metadata } from "next";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 /**
  * HomePage component for the main landing page of the website.
- * 
+ *
  * This page includes a hero section, featured products,
  * a call-to-action section, and contact options.
  *

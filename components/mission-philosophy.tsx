@@ -12,7 +12,7 @@ export default function MissionPhilosophy() {
         </div>
         <div className="md:w-1/2">
           <Image
-            src="/sustainable-gardening.png"
+            src="/sustainable-gardening.webp"
             alt="Sustainable gardening practices"
             width={600}
             height={400}

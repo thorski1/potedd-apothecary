@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Facebook, Instagram, Twitter } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-client'
 
 export default function StayConnected() {
   const [email, setEmail] = useState('');
