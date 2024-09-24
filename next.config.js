@@ -2,6 +2,16 @@
 const nextConfig = {
 	images: {
 		formats: ['image/webp'],
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'ztortvslvwlssohzoxdd.supabase.co',
+			},
+			{
+				protocol: 'http',
+				hostname: 'localhost',
+			},
+		],
 	},
 	webpack: (config, { isServer }) => {
 		if (!isServer) {

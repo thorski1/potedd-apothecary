@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase-client';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 interface ProductCategory {
 	id: string;

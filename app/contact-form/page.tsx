@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase-client';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 export default function ContactFormPage() {
   const [formData, setFormData] = useState({

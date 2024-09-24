@@ -2,9 +2,10 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase-client';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 interface Order {
   id: string;

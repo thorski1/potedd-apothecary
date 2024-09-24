@@ -5,17 +5,15 @@ import { useCart } from '@/lib/cartContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { loadStripe } from '@stripe/stripe-js';
+import { supabase } from '@/lib/supabase-client';
 import Image from 'next/image';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, isLoading } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,44 +24,8 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    const checkReservation = async () => {
-      const reservationId = localStorage.getItem('reservationId');
-      if (!reservationId) {
-        router.push('/cart');
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('reservations')
-        .select('expires_at')
-        .eq('id', reservationId)
-        .single();
-
-      if (error || !data) {
-        router.push('/cart');
-        return;
-      }
-
-      const updateTimer = () => {
-        const now = new Date();
-        const expiresAt = new Date(data.expires_at);
-        const diff = Math.max(0, Math.floor((expiresAt.getTime() - now.getTime()) / 1000));
-        setTimeLeft(diff);
-
-        if (diff === 0) {
-          clearCart();
-          router.push('/cart');
-        }
-      };
-
-      updateTimer();
-      const timerId = setInterval(updateTimer, 1000);
-
-      return () => clearInterval(timerId);
-    };
-
-    checkReservation();
-  }, [clearCart, router]);
+    setIsClient(true);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,7 +43,6 @@ export default function CheckoutPage() {
         throw new Error('No reservation found');
       }
 
-      // 1. Create order in Supabase
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert([
@@ -99,7 +60,6 @@ export default function CheckoutPage() {
 
       if (orderError) throw orderError;
 
-      // 2. Create Stripe Checkout session
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -116,19 +76,11 @@ export default function CheckoutPage() {
         throw new Error('Failed to create Stripe session');
       }
 
-      const session = await response.json();
+      const { sessionUrl } = await response.json();
+      
+      await clearCart();
 
-      // 3. Redirect to Stripe Checkout
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: session.id,
-      });
-
-      if (error) throw error;
+      window.location.href = sessionUrl;
 
     } catch (error) {
       console.error('Checkout error:', error);
@@ -140,14 +92,13 @@ export default function CheckoutPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  if (!isClient || isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      {timeLeft !== null && (
-        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-8" role="alert">
-          <p className="font-bold">Your items are reserved!</p>
-          <p>You have {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} left to complete your purchase.</p>
-        </div>
-      )}
+      <Breadcrumbs />
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
@@ -208,7 +159,7 @@ export default function CheckoutPage() {
               className="mb-4"
             />
             <Button type="submit" disabled={isProcessing} className="w-full">
-              {isProcessing ? 'Processing...' : 'Place Order'}
+              {isProcessing ? 'Processing...' : 'Proceed to Payment'}
             </Button>
           </form>
         </div>

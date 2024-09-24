@@ -20,7 +20,7 @@ export default function OwnerStory() {
 				</div>
 				<div className="md:w-1/2">
 					<Image
-						src="/horticulturist.png"
+						src="/horticulturist.webp"
 						alt="Pot.EdD Apothecary owner"
 						width={600}
 						height={400}
